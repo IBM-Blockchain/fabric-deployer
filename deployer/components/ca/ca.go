@@ -340,13 +340,13 @@ func (ca *CA) CheckReplicas(replicas *int32, configOverride *current.ConfigOverr
 		}
 
 		configoverrideCA := &ibpca.ServerConfig{}
-		err := json.Unmarshal(*configOverride.CA, configoverrideCA)
+		err := json.Unmarshal(configOverride.CA.Raw, configoverrideCA)
 		if err != nil {
 			return errors.New("[checkReplicas] Failed to unmarshal CA configoverride")
 		}
 
 		configoverrideTLSCA := &ibpca.ServerConfig{}
-		err = json.Unmarshal(*configOverride.TLSCA, configoverrideTLSCA)
+		err = json.Unmarshal(configOverride.TLSCA.Raw, configoverrideTLSCA)
 		if err != nil {
 			return errors.New("[checkReplicas] Failed to unmarshal TLSCA configoverride")
 		}
@@ -457,7 +457,7 @@ func (ca *CA) GetCANames(caSpec current.IBPCASpec) (string, string, error) {
 	var caName, tlscaName = "ca", "tlsca"
 	if caSpec.ConfigOverride != nil && caSpec.ConfigOverride.CA != nil {
 		configoverrideCA := &ibpca.ServerConfig{}
-		err := json.Unmarshal(*caSpec.ConfigOverride.CA, configoverrideCA)
+		err := json.Unmarshal(caSpec.ConfigOverride.CA.Raw, configoverrideCA)
 		if err != nil {
 			ca.Logger.Error(errors.Wrapf(err, "Failed to unmarshal configoverride for CA"))
 			return "", "", err
@@ -469,7 +469,7 @@ func (ca *CA) GetCANames(caSpec current.IBPCASpec) (string, string, error) {
 
 	if caSpec.ConfigOverride != nil && caSpec.ConfigOverride.TLSCA != nil {
 		configoverrideTLSCA := &ibpca.ServerConfig{}
-		err := json.Unmarshal(*caSpec.ConfigOverride.TLSCA, configoverrideTLSCA)
+		err := json.Unmarshal(caSpec.ConfigOverride.TLSCA.Raw, configoverrideTLSCA)
 		if err != nil {
 			ca.Logger.Error(errors.Wrapf(err, "Failed to unmarshal configoverride for TLSCA"))
 			return "", "", err

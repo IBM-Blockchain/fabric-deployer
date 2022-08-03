@@ -27,6 +27,7 @@ import (
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/util"
 	current "github.com/IBM-Blockchain/fabric-operator/api/v1beta1"
 	"github.com/pkg/errors"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func (p *Peer) UpdateCR(section, compName, namespace, sID string, body []byte) (*api.Response, int, error) {
@@ -108,7 +109,7 @@ func (p *Peer) updateCR(section, compName, namespace, sID string, body []byte) e
 	return nil
 }
 
-func (p *Peer) updateConfig(originalCR *current.IBPPeer, configOverride *json.RawMessage) {
+func (p *Peer) updateConfig(originalCR *current.IBPPeer, configOverride *runtime.RawExtension) {
 	if configOverride == nil {
 		return
 	}

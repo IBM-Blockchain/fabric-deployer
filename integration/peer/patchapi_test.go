@@ -27,6 +27,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/peer/api"
 	v2peer "github.com/IBM-Blockchain/fabric-operator/api/peer/v2"
@@ -47,7 +48,6 @@ var _ = Describe("Patch APIs", func() {
 
 			configBytes, err := json.Marshal(config)
 			Expect(err).NotTo(HaveOccurred())
-			rawMsg := json.RawMessage(configBytes)
 
 			secret := &current.SecretSpec{
 				Enrollment: &current.EnrollmentSpec{
@@ -99,7 +99,7 @@ var _ = Describe("Patch APIs", func() {
 					},
 				},
 				Config:         secret,
-				ConfigOverride: &rawMsg,
+				ConfigOverride: &runtime.RawExtension{Raw: configBytes},
 				Zone:           "dal1",
 				Region:         "us-south",
 			}
@@ -271,7 +271,7 @@ var _ = Describe("Patch APIs", func() {
 					}
 
 					config := &v2peer.Core{}
-					err = json.Unmarshal(*ibppeer.Spec.ConfigOverride, config)
+					err = json.Unmarshal(ibppeer.Spec.ConfigOverride.Raw, config)
 					if err != nil {
 						return ""
 					}
@@ -286,7 +286,7 @@ var _ = Describe("Patch APIs", func() {
 				Expect(err).NotTo(HaveOccurred())
 
 				config := &v2peer.Core{}
-				err = json.Unmarshal(*ibppeer.Spec.ConfigOverride, config)
+				err = json.Unmarshal(ibppeer.Spec.ConfigOverride.Raw, config)
 				Expect(err).NotTo(HaveOccurred())
 
 				Expect(config.Peer.NetworkID).To(Equal("networkid1"))
@@ -494,7 +494,7 @@ var _ = Describe("Patch APIs", func() {
 						}
 
 						config := &v2peer.Core{}
-						err = json.Unmarshal(*ibppeer.Spec.ConfigOverride, config)
+						err = json.Unmarshal(ibppeer.Spec.ConfigOverride.Raw, config)
 						if err != nil {
 							return ""
 						}
@@ -577,9 +577,8 @@ func addConfigPatch(req *api.UpdateRequest) {
 
 	configBytes, err := json.Marshal(config)
 	Expect(err).NotTo(HaveOccurred())
-	rawMsg := json.RawMessage(configBytes)
 
-	req.ConfigOverride = &rawMsg
+	req.ConfigOverride = &runtime.RawExtension{Raw: configBytes}
 }
 
 func addCryptoPatch(req *api.UpdateRequest) {

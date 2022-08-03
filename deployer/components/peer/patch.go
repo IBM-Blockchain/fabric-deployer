@@ -26,6 +26,7 @@ import (
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/peer/api"
 	current "github.com/IBM-Blockchain/fabric-operator/api/v1beta1"
 	"github.com/pkg/errors"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func (p *Peer) PatchCR(section, compName, namespace, sID string, body []byte) (*api.Response, int, error) {
@@ -111,12 +112,12 @@ func (p *Peer) patchResources(originalCR *current.IBPPeer, resources *current.Pe
 	originalCR.Spec.Resources = resources
 }
 
-func (p *Peer) patchConfig(originalCR *current.IBPPeer, config *json.RawMessage) {
+func (p *Peer) patchConfig(originalCR *current.IBPPeer, config *runtime.RawExtension) {
 	if config == nil {
 		return
 	}
 
-	p.Logger.Debugf("Patching config for '%s' to %s", originalCR.Name, string(*config))
+	p.Logger.Debugf("Patching config for '%s' to %s", originalCR.Name, string(config.Raw))
 	originalCR.Spec.ConfigOverride = config
 }
 

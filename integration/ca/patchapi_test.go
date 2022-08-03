@@ -33,6 +33,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 var _ = Describe("Patch APIs", func() {
@@ -50,13 +51,12 @@ var _ = Describe("Patch APIs", func() {
 
 		configBytes, err := json.Marshal(caConfig)
 		Expect(err).NotTo(HaveOccurred())
-		rawMsg := json.RawMessage(configBytes)
 
 		createCAReq := &api.CreateRequest{
 			Zone:   "dal1",
 			Region: "us-south",
 			ConfigOverride: &current.ConfigOverride{
-				CA: &rawMsg,
+				CA: &runtime.RawExtension{Raw: configBytes},
 			},
 			Resources: &current.CAResources{
 				Init: &corev1.ResourceRequirements{
@@ -157,7 +157,7 @@ var _ = Describe("Patch APIs", func() {
 				}
 
 				config := &v1ca.ServerConfig{}
-				err = json.Unmarshal(*ibpca.Spec.ConfigOverride.CA, config)
+				err = json.Unmarshal(ibpca.Spec.ConfigOverride.CA.Raw, config)
 				if err != nil {
 					return ""
 				}
@@ -175,7 +175,7 @@ var _ = Describe("Patch APIs", func() {
 				}
 
 				config := &v1ca.ServerConfig{}
-				err = json.Unmarshal(*ibpca.Spec.ConfigOverride.TLSCA, config)
+				err = json.Unmarshal(ibpca.Spec.ConfigOverride.TLSCA.Raw, config)
 				if err != nil {
 					return ""
 				}
@@ -190,7 +190,7 @@ var _ = Describe("Patch APIs", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			config := &v1ca.ServerConfig{}
-			err = json.Unmarshal(*ibpca.Spec.ConfigOverride.CA, config)
+			err = json.Unmarshal(ibpca.Spec.ConfigOverride.CA.Raw, config)
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(config.CAConfig.CA.Name).To(Equal("ca1"))
@@ -330,7 +330,7 @@ var _ = Describe("Patch APIs", func() {
 				}
 
 				config := &v1ca.ServerConfig{}
-				err = json.Unmarshal(*ibpca.Spec.ConfigOverride.CA, config)
+				err = json.Unmarshal(ibpca.Spec.ConfigOverride.CA.Raw, config)
 				if err != nil {
 					return ""
 				}
@@ -371,7 +371,6 @@ func addConfigPatch(req *api.UpdateRequest) {
 
 	caBytes, err := json.Marshal(caConfig)
 	Expect(err).NotTo(HaveOccurred())
-	ca := json.RawMessage(caBytes)
 
 	tlscaConfig := &v1ca.ServerConfig{
 		CAConfig: v1ca.CAConfig{
@@ -383,11 +382,10 @@ func addConfigPatch(req *api.UpdateRequest) {
 
 	tlscaBytes, err := json.Marshal(tlscaConfig)
 	Expect(err).NotTo(HaveOccurred())
-	tlsca := json.RawMessage(tlscaBytes)
 
 	req.ConfigOverride = &current.ConfigOverride{
-		CA:    &ca,
-		TLSCA: &tlsca,
+		CA:    &runtime.RawExtension{Raw: caBytes},
+		TLSCA: &runtime.RawExtension{Raw: tlscaBytes},
 	}
 }
 
