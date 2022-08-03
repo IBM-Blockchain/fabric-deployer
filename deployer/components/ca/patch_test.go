@@ -36,6 +36,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 var _ = Describe("Patch API", func() {
@@ -236,11 +237,10 @@ var _ = Describe("Patch API", func() {
 
 				configBytes, err := json.Marshal(config)
 				Expect(err).NotTo(HaveOccurred())
-				rawMsg := json.RawMessage(configBytes)
 
 				request := &api.UpdateRequest{
 					ConfigOverride: &current.ConfigOverride{
-						CA: &rawMsg,
+						CA: &runtime.RawExtension{Raw: configBytes},
 					},
 				}
 
@@ -262,7 +262,7 @@ var _ = Describe("Patch API", func() {
 					Expect(err).NotTo(HaveOccurred())
 
 					config := &v1ca.ServerConfig{}
-					err = json.Unmarshal(*cr.Spec.ConfigOverride.CA, config)
+					err = json.Unmarshal(cr.Spec.ConfigOverride.CA.Raw, config)
 					Expect(err).NotTo(HaveOccurred())
 
 					Expect(config.CAConfig.CA.Name).To(Equal("ca1"))

@@ -30,13 +30,11 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
 
-	"github.com/IBM-Blockchain/fabric-deployer/config"
 	cfg "github.com/IBM-Blockchain/fabric-deployer/config"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/ca"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/ca/api"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/ca/mocks"
 	ibpca "github.com/IBM-Blockchain/fabric-operator/api/ca/v1"
-	v1 "github.com/IBM-Blockchain/fabric-operator/api/ca/v1"
 	current "github.com/IBM-Blockchain/fabric-operator/api/v1beta1"
 )
 
@@ -63,7 +61,7 @@ var _ = Describe("Update API", func() {
 		res := map[corev1.ResourceName]resource.Quantity{}
 		res[corev1.ResourceCPU] = resource.MustParse("1")
 		res[corev1.ResourceMemory] = resource.MustParse("1Mi")
-		cfg := &config.DeployerSettingsConfig{
+		cfg := &cfg.DeployerSettingsConfig{
 			Defaults: &cfg.DeployerDefaults{
 				Storage: &cfg.Storage{
 					CA: &current.CAStorages{
@@ -99,7 +97,7 @@ var _ = Describe("Update API", func() {
 				Deployment: 1000,
 			},
 			ImagePullSecrets: []string{"imagepullsecret"},
-			CRN:              &config.CRN{},
+			CRN:              &cfg.CRN{},
 		}
 
 		caComp = &ca.CA{
@@ -112,21 +110,19 @@ var _ = Describe("Update API", func() {
 
 	Context("update CA CR", func() {
 		var (
-			body   []byte
-			err    error
-			caJson json.RawMessage
+			body []byte
+			err  error
 		)
 
 		BeforeEach(func() {
-			caConfig := &v1.ServerConfig{}
+			caConfig := &ibpca.ServerConfig{}
 			caBytes, err := json.Marshal(caConfig)
 			Expect(err).NotTo(HaveOccurred())
-			caJson = json.RawMessage(caBytes)
 
 			replicas := int32(2)
 			request := &api.UpdateRequest{
 				ConfigOverride: &current.ConfigOverride{
-					CA:    &caJson,
+					CA:    &runtime.RawExtension{Raw: caBytes},
 					TLSCA: nil,
 				},
 				Version:  "1.4.1-1",
@@ -163,8 +159,9 @@ var _ = Describe("Update API", func() {
 					_, _, _, crBytes := client.UpdateCRArgsForCall(0)
 					err := json.Unmarshal(crBytes, cr)
 					Expect(err).NotTo(HaveOccurred())
-
-					Expect(reflect.DeepEqual(*cr.Spec.ConfigOverride.CA, caJson)).To(Equal(true))
+					caConfig := &ibpca.ServerConfig{}
+					caBytes, _ := json.Marshal(caConfig)
+					Expect(reflect.DeepEqual(cr.Spec.ConfigOverride.CA.Raw, caBytes)).To(Equal(true))
 				})
 			})
 		})
@@ -213,11 +210,10 @@ var _ = Describe("Update API", func() {
 				}
 				caBytes, err := json.Marshal(caConfig)
 				Expect(err).NotTo(HaveOccurred())
-				caJson := json.RawMessage(caBytes)
 
 				configOverride := &current.ConfigOverride{
-					CA:    &caJson,
-					TLSCA: &caJson,
+					CA:    &runtime.RawExtension{Raw: caBytes},
+					TLSCA: &runtime.RawExtension{Raw: caBytes},
 				}
 
 				client.GetCRStub = func(namespace string, kind string, name string, caCR runtime.Object) error {

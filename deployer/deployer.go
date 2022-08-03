@@ -148,8 +148,9 @@ func (d *Deployer) Init() error {
 		TLSConfig: &tls.Config{
 			MinVersion: tls.VersionTLS12, // TLS 1.2 recommended, TLS 1.3 (current latest version) encouraged
 		},
-		WriteTimeout: time.Duration(config.Timeouts.APIServer) * time.Millisecond,
-		IdleTimeout:  time.Duration(config.Timeouts.APIServer) * time.Millisecond,
+		WriteTimeout:      time.Duration(config.Timeouts.APIServer) * time.Millisecond,
+		IdleTimeout:       time.Duration(config.Timeouts.APIServer) * time.Millisecond,
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 
 	d.CA = ca.New(d.LocalConfig.Logger, d.K8SClient, d.IBPOperatorClient, d.Config)

@@ -102,11 +102,11 @@ func (ca *CA) patchConfig(originalCR *current.IBPCA, config *current.ConfigOverr
 	}
 
 	if config.CA != nil {
-		ca.Logger.Debugf("Patching CA config for '%s' to %s", originalCR.Name, string(*config.CA))
+		ca.Logger.Debugf("Patching CA config for '%s' to %s", originalCR.Name, string(config.CA.Raw))
 	}
 
 	if config.TLSCA != nil {
-		ca.Logger.Debugf("Patching TLS CA config for '%s' to %s", originalCR.Name, string(*config.TLSCA))
+		ca.Logger.Debugf("Patching TLS CA config for '%s' to %s", originalCR.Name, string(config.TLSCA.Raw))
 	}
 
 	originalCR.Spec.ConfigOverride = config

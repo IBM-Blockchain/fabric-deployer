@@ -25,6 +25,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/ca/api"
 	v1 "github.com/IBM-Blockchain/fabric-operator/api/ca/v1"
@@ -65,11 +66,10 @@ var _ = Describe("Update APIs", func() {
 			}
 			caBytes, err := json.Marshal(caConfig)
 			Expect(err).NotTo(HaveOccurred())
-			caJson := json.RawMessage(caBytes)
 
 			request := &api.UpdateRequest{
 				ConfigOverride: &current.ConfigOverride{
-					CA:    &caJson,
+					CA:    &runtime.RawExtension{Raw: caBytes},
 					TLSCA: nil,
 				},
 			}
@@ -90,7 +90,7 @@ var _ = Describe("Update APIs", func() {
 					}
 					return ibpca.Spec.ConfigOverride
 				}).Should(Equal(&current.ConfigOverride{
-					CA:    &caJson,
+					CA:    &runtime.RawExtension{Raw: caBytes},
 					TLSCA: nil,
 				}))
 

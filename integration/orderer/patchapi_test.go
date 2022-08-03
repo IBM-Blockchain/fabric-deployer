@@ -33,6 +33,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 var _ = Describe("Patch APIs", func() {
@@ -46,7 +47,6 @@ var _ = Describe("Patch APIs", func() {
 
 		configBytes, err := json.Marshal(config)
 		Expect(err).NotTo(HaveOccurred())
-		rawMsg := json.RawMessage(configBytes)
 
 		secret := &current.SecretSpec{
 			Enrollment: &current.EnrollmentSpec{
@@ -97,7 +97,7 @@ var _ = Describe("Patch APIs", func() {
 					},
 				},
 			},
-			ConfigOverride: &rawMsg,
+			ConfigOverride: &runtime.RawExtension{Raw: configBytes},
 			Config:         secret,
 			Zone:           "dal1",
 			Region:         "us-south",
@@ -282,7 +282,7 @@ var _ = Describe("Patch APIs", func() {
 				}
 
 				config := &v2orderer.Orderer{}
-				err = json.Unmarshal(*ibporderer.Spec.ConfigOverride, config)
+				err = json.Unmarshal(ibporderer.Spec.ConfigOverride.Raw, config)
 				if err != nil {
 					return ""
 				}
@@ -297,7 +297,7 @@ var _ = Describe("Patch APIs", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			config := &v2orderer.Orderer{}
-			err = json.Unmarshal(*ibporderer.Spec.ConfigOverride, config)
+			err = json.Unmarshal(ibporderer.Spec.ConfigOverride.Raw, config)
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(config.General.LocalMSPDir).To(Equal("msp/dir"))
@@ -511,7 +511,7 @@ var _ = Describe("Patch APIs", func() {
 					}
 
 					config := &v2orderer.Orderer{}
-					err = json.Unmarshal(*ibporderer.Spec.ConfigOverride, config)
+					err = json.Unmarshal(ibporderer.Spec.ConfigOverride.Raw, config)
 					if err != nil {
 						return ""
 					}
@@ -593,9 +593,8 @@ func addConfigPatch(req *api.UpdateRequest) {
 
 	configBytes, err := json.Marshal(config)
 	Expect(err).NotTo(HaveOccurred())
-	rawMsg := json.RawMessage(configBytes)
 
-	req.ConfigOverride = &rawMsg
+	req.ConfigOverride = &runtime.RawExtension{Raw: configBytes}
 }
 
 func addCryptoPatch(req *api.UpdateRequest) {

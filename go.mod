@@ -1,10 +1,10 @@
 module github.com/IBM-Blockchain/fabric-deployer
 
-go 1.17
+go 1.18
 
 require (
 	// points to fabric-operator repo of api branch
-	github.com/IBM-Blockchain/fabric-operator v0.0.0-20220526205037-95dcc9aa8b92
+	github.com/IBM-Blockchain/fabric-operator v0.0.0-20220802193233-8546a391eb13
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/onsi/ginkgo v1.14.1
 	github.com/onsi/gomega v1.10.2
@@ -18,14 +18,14 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce // indirect
+	github.com/docker/docker v20.10.12+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.0 // indirect
-	github.com/google/go-cmp v0.5.5 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/googleapis/gnostic v0.4.1 // indirect
 	github.com/imdario/mergo v0.3.5 // indirect

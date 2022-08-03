@@ -19,12 +19,11 @@
 package api
 
 import (
-	"encoding/json"
-
 	dconfig "github.com/IBM-Blockchain/fabric-deployer/config"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/common"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/util"
 	current "github.com/IBM-Blockchain/fabric-operator/api/v1beta1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type CreateRequest struct {
@@ -36,7 +35,7 @@ type CreateRequest struct {
 	Resources         *current.OrdererResources `json:"resources,omitempty"`
 	Storage           *current.OrdererStorages  `json:"storage,omitempty"`
 	SystemChannelName string                    `json:"systemchannelname,omitempty"`
-	ConfigOverride    []*json.RawMessage        `json:"configoverride,omitempty"`
+	ConfigOverride    []*runtime.RawExtension   `json:"configoverride,omitempty"`
 	HSM               *current.HSM              `json:"hsm,omitempty"`
 	Version           string                    `json:"version,omitempty"`
 	Arch              []string                  `json:"arch,omitempty"`
@@ -54,7 +53,7 @@ type PrecreateRequest struct {
 	Resources         *current.OrdererResources `json:"resources,omitempty"`
 	Storage           *current.OrdererStorages  `json:"storage,omitempty"`
 	SystemChannelName string                    `json:"systemchannelname,omitempty"`
-	ConfigOverride    *json.RawMessage          `json:"configoverride,omitempty"`
+	ConfigOverride    *runtime.RawExtension     `json:"configoverride,omitempty"`
 	HSM               *current.HSM              `json:"hsm,omitempty"`
 	Version           string                    `json:"version,omitempty"`
 	Arch              []string                  `json:"arch,omitempty"`
@@ -74,7 +73,7 @@ type UpdateRequest struct {
 	AdminCerts     []string                  `json:"admincerts,omitempty"`
 	Resources      *current.OrdererResources `json:"resources,omitempty"`
 	Genesis        *GenesisSpec              `json:"genesis,omitempty"`
-	ConfigOverride *json.RawMessage          `json:"configoverride,omitempty"`
+	ConfigOverride *runtime.RawExtension     `json:"configoverride,omitempty"`
 	HSM            *current.HSM              `json:"hsm,omitempty"`
 	NodeOU         *NodeOU                   `json:"nodeou,omitempty"`
 	Actions        *current.OrdererAction    `json:"actions,omitempty"`

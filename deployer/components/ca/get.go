@@ -27,6 +27,7 @@ import (
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/util"
 	current "github.com/IBM-Blockchain/fabric-operator/api/v1beta1"
 	"github.com/pkg/errors"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func (ca *CA) GetCR(section, compName, namespace, sID string) (*api.Response, int, error) {
@@ -147,7 +148,7 @@ func (ca *CA) getConfig(originalCR *current.IBPCA, response *api.Response, statu
 			*statusCode = common.StatusCode500
 		} else {
 			caJson := json.RawMessage(caBytes)
-			configs.CA = &caJson
+			configs.CA = &runtime.RawExtension{Raw: caJson}
 		}
 	}
 
@@ -163,7 +164,7 @@ func (ca *CA) getConfig(originalCR *current.IBPCA, response *api.Response, statu
 			*statusCode = common.StatusCode500
 		} else {
 			tlscaJson := json.RawMessage(tlscaBytes)
-			configs.TLSCA = &tlscaJson
+			configs.TLSCA = &runtime.RawExtension{Raw: tlscaJson}
 		}
 	}
 

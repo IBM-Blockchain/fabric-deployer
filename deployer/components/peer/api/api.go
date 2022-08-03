@@ -19,12 +19,11 @@
 package api
 
 import (
-	"encoding/json"
-
 	dconfig "github.com/IBM-Blockchain/fabric-deployer/config"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/common"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/util"
 	current "github.com/IBM-Blockchain/fabric-operator/api/v1beta1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type CreateRequest struct {
@@ -35,7 +34,7 @@ type CreateRequest struct {
 	StateDB        string                 `json:"statedb,omitempty"`
 	Resources      *current.PeerResources `json:"resources,omitempty"`
 	Storage        *current.PeerStorages  `json:"storage,omitempty"`
-	ConfigOverride *json.RawMessage       `json:"configoverride,omitempty"`
+	ConfigOverride *runtime.RawExtension  `json:"configoverride,omitempty"`
 	HSM            *current.HSM           `json:"hsm,omitempty"` // DEPRECATED
 	Arch           []string               `json:"arch,omitempty"`
 	Region         string                 `json:"region,omitempty"`
@@ -52,7 +51,7 @@ type UpdateRequest struct {
 	Config         *current.SecretSpec    `json:"crypto,omitempty"`
 	AdminCerts     []string               `json:"admincerts,omitempty"`
 	Resources      *current.PeerResources `json:"resources,omitempty"`
-	ConfigOverride *json.RawMessage       `json:"configoverride,omitempty"`
+	ConfigOverride *runtime.RawExtension  `json:"configoverride,omitempty"`
 	HSM            *current.HSM           `json:"hsm,omitempty"` // DEPRECATED
 	NodeOU         *NodeOU                `json:"nodeou,omitempty"`
 	Actions        *current.PeerAction    `json:"actions,omitempty"`

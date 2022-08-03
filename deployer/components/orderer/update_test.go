@@ -156,10 +156,9 @@ var _ = Describe("Update API", func() {
 
 				configBytes, err := json.Marshal(config)
 				Expect(err).NotTo(HaveOccurred())
-				rawMsg := json.RawMessage(configBytes)
 
 				request := &api.UpdateRequest{
-					ConfigOverride: &rawMsg,
+					ConfigOverride: &runtime.RawExtension{Raw: configBytes},
 				}
 
 				body, err = json.Marshal(request)
@@ -180,7 +179,7 @@ var _ = Describe("Update API", func() {
 					Expect(err).NotTo(HaveOccurred())
 
 					config := &v2orderer.Orderer{}
-					err = json.Unmarshal(*cr.Spec.ConfigOverride, config)
+					err = json.Unmarshal(cr.Spec.ConfigOverride.Raw, config)
 					Expect(err).NotTo(HaveOccurred())
 
 					Expect(config.General.LocalMSPID).To(Equal("mspid2"))

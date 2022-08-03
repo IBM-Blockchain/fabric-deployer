@@ -250,8 +250,8 @@ var _ = Describe("CA", func() {
 			tlscaJson := json.RawMessage(tlscaBytes)
 
 			createReq.ConfigOverride = &current.ConfigOverride{
-				CA:    &caJson,
-				TLSCA: &tlscaJson,
+				CA:    &runtime.RawExtension{Raw: caJson},
+				TLSCA: &runtime.RawExtension{Raw: tlscaJson},
 			}
 			createReq.Replicas = &replicas
 			body, err = json.Marshal(createReq)
@@ -521,8 +521,8 @@ var _ = Describe("CA", func() {
 			tlscaJson := json.RawMessage(tlscaBytes)
 
 			configOverride = &current.ConfigOverride{
-				CA:    &caJson,
-				TLSCA: &tlscaJson,
+				CA:    &runtime.RawExtension{Raw: caJson},
+				TLSCA: &runtime.RawExtension{Raw: tlscaJson},
 			}
 		})
 
@@ -561,8 +561,8 @@ var _ = Describe("CA", func() {
 				caJson := json.RawMessage(caBytes)
 
 				configOverride = &current.ConfigOverride{
-					CA:    &caJson,
-					TLSCA: &caJson,
+					CA:    &runtime.RawExtension{Raw: caJson},
+					TLSCA: &runtime.RawExtension{Raw: caJson},
 				}
 
 				err = testCA.CheckReplicas(replicas, configOverride)
@@ -582,7 +582,7 @@ var _ = Describe("CA", func() {
 				Expect(err).NotTo(HaveOccurred())
 				caJson := json.RawMessage(caBytes)
 
-				configOverride.CA = &caJson
+				configOverride.CA = &runtime.RawExtension{Raw: caJson}
 
 				err = testCA.CheckReplicas(replicas, configOverride)
 				Expect(err).To(HaveOccurred())
@@ -600,7 +600,7 @@ var _ = Describe("CA", func() {
 				tlscaBytes, err := json.Marshal(tlscaConfig)
 				Expect(err).NotTo(HaveOccurred())
 				tlscaJson := json.RawMessage(tlscaBytes)
-				configOverride.TLSCA = &tlscaJson
+				configOverride.TLSCA = &runtime.RawExtension{Raw: tlscaJson}
 
 				err = testCA.CheckReplicas(replicas, configOverride)
 				Expect(err).To(HaveOccurred())
@@ -619,7 +619,7 @@ var _ = Describe("CA", func() {
 				Expect(err).NotTo(HaveOccurred())
 				tlscaJson := json.RawMessage(tlscaBytes)
 
-				configOverride.TLSCA = &tlscaJson
+				configOverride.TLSCA = &runtime.RawExtension{Raw: tlscaJson}
 
 				err = testCA.CheckReplicas(replicas, configOverride)
 				Expect(err).To(HaveOccurred())
@@ -637,7 +637,7 @@ var _ = Describe("CA", func() {
 				caBytes, err := json.Marshal(caConfig)
 				Expect(err).NotTo(HaveOccurred())
 				caJson := json.RawMessage(caBytes)
-				configOverride.CA = &caJson
+				configOverride.CA = &runtime.RawExtension{Raw: caJson}
 
 				err = testCA.CheckReplicas(replicas, configOverride)
 				Expect(err).To(HaveOccurred())
