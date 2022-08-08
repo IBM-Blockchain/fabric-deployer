@@ -36,6 +36,7 @@ import (
 	"github.com/IBM-Blockchain/fabric-deployer/config"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/ca"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/common"
+	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/operator"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/orderer"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/components/peer"
 	"github.com/IBM-Blockchain/fabric-deployer/deployer/ibpoperator"
@@ -61,9 +62,10 @@ type Deployer struct {
 	IBPOperatorClient *ibpoperator.Client
 	K8SClient         *kube.Kube
 
-	CA      *ca.CA
-	Peer    *peer.Peer
-	Orderer *orderer.Orderer
+	CA       *ca.CA
+	Peer     *peer.Peer
+	Orderer  *orderer.Orderer
+	Operator *operator.Operator
 
 	httpServer *http.Server
 }
@@ -156,6 +158,7 @@ func (d *Deployer) Init() error {
 	d.CA = ca.New(d.LocalConfig.Logger, d.K8SClient, d.IBPOperatorClient, d.Config)
 	d.Peer = peer.New(d.LocalConfig.Logger, d.K8SClient, d.IBPOperatorClient, d.Config)
 	d.Orderer = orderer.New(d.LocalConfig.Logger, d.K8SClient, d.IBPOperatorClient, d.Config)
+	d.Operator = operator.New(d.LocalConfig.Logger, d.K8SClient)
 
 	d.registerEndpoints()
 	return nil
