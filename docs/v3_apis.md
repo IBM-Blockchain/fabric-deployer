@@ -1,7 +1,6 @@
 # Deployer APIs
 
-Blockchain Deployer is responsible for providing most of the
-backend functionality for IBM Cloud's Blockchain Platform Console UI.
+Blockchain Deployer is responsible for providing most of the backend functionality for Fabric Operations Console UI.
 
 ## Table of Contents
 

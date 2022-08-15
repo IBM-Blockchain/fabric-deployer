@@ -7,7 +7,7 @@
 2. Clone the your own fork on the work machine
 
    ```bash
-   git clone https://github.ibm.com/<user>/deployer-to-go
+   git clone https://github.com/<user>/fabric-deployer
    ```
 
 3. Create a branch on your own fork

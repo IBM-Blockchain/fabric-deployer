@@ -73,7 +73,7 @@ test: fmt vet ## Runs unit tests
 image: ## Builds a x86 based image
 	@$(LOG_MSG) Building docker image ... | $(PRINT_BLUE)
 	# need to run go mod vendor here as the travis worker has the keys to pull modules
-	# from github.ibm.com but the docker container that builds the image doesnt. We get
+	# from github.com but the docker container that builds the image doesnt. We get
 	# the modules on the machine first, before building the image so there is no need
 	# for go get inside the builder container.
 	@go mod vendor
