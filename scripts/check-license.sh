@@ -102,9 +102,9 @@ if [[ -z "$CHECK" ]]; then
    exit 0
 fi
 
-missing=`echo "$CHECK" | xargs ls -d 2>/dev/null | xargs grep -L "Copyright IBM Corp"`
+missing=`echo "$CHECK" | xargs ls -d 2>/dev/null | xargs grep -L "SPDX-License-Identifier: Apache-2.0"`
 if [[ -z "$missing" ]]; then
-   echo "All files have Copyright IBM Corp headers"
+   echo "All files have SPDX-License-Identifier: Apache-2.0"
    exit 0
 fi
 
